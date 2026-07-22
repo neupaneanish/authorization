@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	corev3 "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
@@ -17,10 +18,12 @@ type LoginAccessSession struct {
 	Ver    int64     `json:"ver"     valkey:",ver"`
 	ExAt   time.Time `json:"exat"    valkey:",exat"`
 	UserID string    `json:"user_id"`
+	Role   string    `json:"role"`
 }
 
 const (
 	LoginAccessSessionPrefix = "login:access:session"
+	RoleRoot                 = "root"
 )
 
 func (s *AuthorizationService) Check(
@@ -28,6 +31,7 @@ func (s *AuthorizationService) Check(
 	req *envoyService.CheckRequest,
 ) (*envoyService.CheckResponse, error) {
 	metadata := req.GetAttributes().GetMetadataContext().GetFilterMetadata()
+	method := req.GetAttributes().GetRequest().GetHttp().GetPath()
 
 	jwtMetadata, ok := metadata["envoy.filters.http.jwt_authn"]
 	if !ok {
@@ -38,10 +42,9 @@ func (s *AuthorizationService) Check(
 	fields := jwtMetadata.GetFields()
 
 	sub := fields["sub"].GetStringValue()
-	role := fields["role"].GetStringValue()
 	jti := fields["jti"].GetStringValue()
 
-	if sub == "" || role == "" || jti == "" {
+	if sub == "" || jti == "" {
 		s.cfg.Logger.ErrorContext(ctx, "Envoy pass empty jwt")
 		return authError(code.Code_UNAUTHENTICATED, "Session expired")
 	}
@@ -61,6 +64,10 @@ func (s *AuthorizationService) Check(
 		return authError(code.Code_UNAUTHENTICATED, "Session expired")
 	}
 
+	if strings.HasPrefix(method, "/root.") && session.Role != RoleRoot {
+		return authError(code.Code_PERMISSION_DENIED, "Permission denied")
+	}
+
 	return &envoyService.CheckResponse{
 		Status: &status.Status{
 			Code: int32(code.Code_OK),
@@ -78,7 +85,7 @@ func (s *AuthorizationService) Check(
 					{
 						Header: &corev3.HeaderValue{
 							Key:   "x-role",
-							Value: role,
+							Value: session.Role,
 						},
 						AppendAction: corev3.HeaderValueOption_OVERWRITE_IF_EXISTS_OR_ADD,
 					},
