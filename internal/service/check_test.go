@@ -25,12 +25,11 @@ func TestCheck(t *testing.T) {
 		userID := uuid.NewString()
 		key := uuid.NewString()
 
-		seedSession(t, key, userID)
+		seedSession(t, key, userID, "Test")
 
 		claims := map[string]interface{}{
-			"sub":  userID,
-			"role": "test",
-			"jti":  key,
+			"sub": userID,
+			"jti": key,
 		}
 
 		req := buildCheckRequest("/test", claims, "")
@@ -47,17 +46,34 @@ func TestCheck(t *testing.T) {
 		}
 
 		assert.Equal(t, userID, headers["x-user-id"])
-		assert.Equal(t, "test", headers["x-role"])
 		assert.Equal(t, key, headers["x-jti"])
+	})
+
+	t.Run("Invalid Permission", func(t *testing.T) {
+		t.Parallel()
+		userID := uuid.NewString()
+		key := uuid.NewString()
+
+		seedSession(t, key, userID, "Test")
+
+		claims := map[string]interface{}{
+			"sub": userID,
+			"jti": key,
+		}
+
+		req := buildCheckRequest("/root.Test", claims, "")
+
+		res, err := authClient.Check(t.Context(), req)
+		require.NoError(t, err)
+		assert.Equal(t, int32(code.Code_PERMISSION_DENIED), res.Status.Code)
 	})
 
 	t.Run("Empty claims", func(t *testing.T) {
 		t.Parallel()
 
 		claims := map[string]interface{}{
-			"sub":  "",
-			"role": "",
-			"jti":  "",
+			"sub": "",
+			"jti": "",
 		}
 
 		req := buildCheckRequest("/test", claims, "")
@@ -73,12 +89,11 @@ func TestCheck(t *testing.T) {
 		userID := uuid.NewString()
 		key := uuid.NewString()
 
-		seedSession(t, key, userID)
+		seedSession(t, key, userID, "Test")
 
 		claims := map[string]interface{}{
-			"sub":  uuid.NewString(),
-			"role": "test",
-			"jti":  key,
+			"sub": uuid.NewString(),
+			"jti": key,
 		}
 		req := buildCheckRequest("/test", claims, "")
 		res, err := authClient.Check(t.Context(), req)
@@ -93,9 +108,8 @@ func TestCheck(t *testing.T) {
 		key := uuid.NewString()
 
 		claims := map[string]interface{}{
-			"sub":  userID,
-			"role": "test",
-			"jti":  key,
+			"sub": userID,
+			"jti": key,
 		}
 		req := buildCheckRequest("/test", claims, "")
 		res, err := authClient.Check(t.Context(), req)
@@ -122,13 +136,14 @@ func TestCheck(t *testing.T) {
 	})
 }
 
-func seedSession(t *testing.T, key, userID string) {
+func seedSession(t *testing.T, key, userID string, role string) {
 	t.Helper()
 
 	data := &service.LoginAccessSession{
 		Key:    key,
 		ExAt:   time.Now().Add(15 * time.Minute),
 		UserID: userID,
+		Role:   role,
 	}
 	err := redis.HSet[service.LoginAccessSession](t.Context(), service.LoginAccessSessionPrefix, data, cfg.Client)
 	require.NoError(t, err)
