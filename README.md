@@ -12,13 +12,17 @@ Distributed Authorization Microservice with Go, gRPC, Envoy, and Valkey for Envo
 
 ## Technologies Stack
 
-![Go](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)
-![gRPC](https://img.shields.io/badge/gRPC-2596BE?style=for-the-badge&logo=trpc&logoColor=white)
-![Valkey](https://img.shields.io/badge/Valkey-FF4438?style=for-the-badge&logo=redis&logoColor=white)
-![Envoy](https://img.shields.io/badge/Envoy-AC6199?style=for-the-badge&logo=envoyproxy&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![GitHubActions](https://img.shields.io/badge/Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
-![Opentelemetry](https://img.shields.io/badge/Opentelemetry-000000?style=for-the-badge&logo=opentelemetry&logoColor=white)
+| Technology                                                |                                                                                                  | Description                                                       |
+|:----------------------------------------------------------|:------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------|
+| [**Go**](https://go.dev)                                  |             <img src="https://thesvg.org/icons/go/default.svg" height="12" alt="Go">             | Core application logic                                            |
+| [**gRPC**](https://grpc.io)                               |           <img src="https://thesvg.org/icons/grpc/default.svg" height="24" alt="gRPC">           | High-performance RPC framework                                    |
+| [**Valkey**](https://valkey.io)                           |         <img src="https://thesvg.org/icons/valkey/default.svg" height="24" alt="Valkey">         | High-performance data structure store                             |
+| [**Envoy**](https://www.envoyproxy.io)                    |         <img src="https://thesvg.org/icons/envoy/default.svg" height="24" alt="Valkey">          | API Gateway and Edge Proxy                                        |
+| [**Docker**](https://docker.com)                          |         <img src="https://thesvg.org/icons/docker/default.svg" height="24" alt="Docker">         | Containerization and deployment                                   |
+| [**Test Containers**](https://testcontainers.com)         | <img src="https://thesvg.org/icons/development-containers/default.svg" height="24" alt="Docker"> | Orchestrates real Valkey Docker instances inside automated tests. |
+| [**GitHub Actions**](https://github.com/features/actions) | <img src="https://thesvg.org/icons/github-actions/default.svg" height="24" alt="GitHub Actions"> | CI/CD automation pipelines                                        |
+| [**OpenTelemetry**](https://opentelemetry.io)             |  <img src="https://thesvg.org/icons/opentelemetry/default.svg" height="24" alt="OpenTelemetry">  | Observability and telemetry framework                             |
+
 ---
 
 ## Environments

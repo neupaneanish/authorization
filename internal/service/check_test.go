@@ -6,9 +6,10 @@ import (
 	"testing"
 	"time"
 
+	"uuid"
+
 	corev3 "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
 	envoyService "github.com/envoyproxy/go-control-plane/envoy/service/auth/v3"
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/genproto/googleapis/rpc/code"
@@ -22,8 +23,8 @@ func TestCheck(t *testing.T) {
 
 	t.Run("Success", func(t *testing.T) {
 		t.Parallel()
-		userID := uuid.NewString()
-		key := uuid.NewString()
+		userID := uuid.NewV7().String()
+		key := uuid.NewV7().String()
 
 		seedSession(t, key, userID, "Test")
 
@@ -51,8 +52,8 @@ func TestCheck(t *testing.T) {
 
 	t.Run("Invalid Permission", func(t *testing.T) {
 		t.Parallel()
-		userID := uuid.NewString()
-		key := uuid.NewString()
+		userID := uuid.NewV7().String()
+		key := uuid.NewV7().String()
 
 		seedSession(t, key, userID, "Test")
 
@@ -86,13 +87,13 @@ func TestCheck(t *testing.T) {
 	t.Run("Invalid sub", func(t *testing.T) {
 		t.Parallel()
 
-		userID := uuid.NewString()
-		key := uuid.NewString()
+		userID := uuid.NewV7().String()
+		key := uuid.NewV7().String()
 
 		seedSession(t, key, userID, "Test")
 
 		claims := map[string]interface{}{
-			"sub": uuid.NewString(),
+			"sub": uuid.NewV7().String(),
 			"jti": key,
 		}
 		req := buildCheckRequest("/test", claims, "")
@@ -104,8 +105,8 @@ func TestCheck(t *testing.T) {
 	t.Run("Session Expired", func(t *testing.T) {
 		t.Parallel()
 
-		userID := uuid.NewString()
-		key := uuid.NewString()
+		userID := uuid.NewV7().String()
+		key := uuid.NewV7().String()
 
 		claims := map[string]interface{}{
 			"sub": userID,
