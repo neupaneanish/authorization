@@ -14,11 +14,12 @@ import (
 )
 
 type LoginAccessSession struct {
-	Key    string    `json:"key"     valkey:",key"`
-	Ver    int64     `json:"ver"     valkey:",ver"`
-	ExAt   time.Time `json:"exat"    valkey:",exat"`
-	UserID string    `json:"user_id"`
-	Role   string    `json:"role"`
+	Key     string    `json:"key"     valkey:",key"`
+	Ver     int64     `json:"ver"     valkey:",ver"`
+	ExAt    time.Time `json:"exat"    valkey:",exat"`
+	UserID  string    `json:"user_id"`
+	Role    string    `json:"role"`
+	Refresh string    `json:"refresh"`
 }
 
 const (
